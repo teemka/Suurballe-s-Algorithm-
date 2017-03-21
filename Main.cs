@@ -17,9 +17,13 @@ namespace Suurballe_s_Algorithm
             g.AddVertexAndOutgoingEdges('D', new Dictionary<char, int>() { { 'C', 2 }, { 'F', 1 }, { 'B', 1 } });
             g.AddVertexAndOutgoingEdges('E', new Dictionary<char, int>() { { 'B', 2 }, { 'F', 2 } });
             g.AddVertexAndOutgoingEdges('F', new Dictionary<char, int>() { { 'D', 1 }, { 'E', 2 } });
-            g.AddVertex('Z');
-           
-            g.PrintPath(g.ShortestPath('A', 'F').Path);
+            //g.AddVertex('Z');
+            
+
+
+            //g.PrintPath(g.ShortestPath('A', 'F').Path);
+
+            g.Suurballe('A', 'F');
             Console.ReadLine();
         }
     }

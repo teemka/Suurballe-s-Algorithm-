@@ -38,11 +38,7 @@ namespace Suurballe_s_Algorithm
         }
         public void AddEdge(char from, char to, int value)
         {
-            if (Vertices[from].ContainsKey(to))
-                throw new Exception("Edge already exists.");
-            //Console.WriteLine("Edge {0} -> {1} already exists!", from, to);
-            else
-                Vertices[from].Add(to, value);
+            Vertices[from].Add(to, value);
         }
         public void RemoveEdge(char from, char to)
         {
@@ -68,9 +64,15 @@ namespace Suurballe_s_Algorithm
                 throw new Exception("Edge does not exist.");
             //Console.WriteLine("Edge {0} -> {1} does not exist!", from, to);
         }
+        public void ReverseEdge(char from, char to)//only works if there is no reversed edge there already
+        {
+            var value = this.GetEdgeValue(from, to);
+            this.RemoveEdge(from, to);
+            this.AddEdge(to, from, value);
+        }
         public DijkstraOut ShortestPath(char Start, char Finish)
         {
-            var Previous = new Dictionary<char, char>();
+            var Parents = new Dictionary<char, char>();
             var Distances = new Dictionary<char, int>();
             var Nodes = new List<char>();
 
@@ -94,51 +96,71 @@ namespace Suurballe_s_Algorithm
             {
                 Nodes.Sort((x, y) => Distances[x] - Distances[y]);
 
-                var smallest = Nodes[0];
-                Nodes.Remove(smallest);
+                var Smallest = Nodes[0];
+                Nodes.Remove(Smallest);
 
-                if (smallest == Finish)
+                if (Smallest == Finish)
                 {
                     PathDistance = Distances[Finish];
                     Path = new List<char>();
-                    while (Previous.ContainsKey(smallest))
+                    while (Parents.ContainsKey(Smallest))
                     {
-                        Path.Add(smallest);
-                        smallest = Previous[smallest];
+                        Path.Add(Smallest);
+                        Smallest = Parents[Smallest];
                     }
                     Path.Add(Start);
                     Path.Reverse();
                     break;
                 }
 
-                if (Distances[smallest] == int.MaxValue)
+                if (Distances[Smallest] == int.MaxValue)
                 {
                     break;
                 }
 
-                foreach (var neighbor in Vertices[smallest])
+                foreach (var Neighbour in Vertices[Smallest])
                 {
-                    var alt = Distances[smallest] + neighbor.Value;
-                    if (alt < Distances[neighbor.Key])
+                    var alt = Distances[Smallest] + Neighbour.Value;
+                    if (alt < Distances[Neighbour.Key])
                     {
-                        Distances[neighbor.Key] = alt;
-                        Previous[neighbor.Key] = smallest;
+                        Distances[Neighbour.Key] = alt;
+                        Parents[Neighbour.Key] = Smallest;
                     }
                 }
             }
-            return new DijkstraOut(Path, Previous, Distances);
+            return new DijkstraOut(Path, Parents, Distances);
         }
         public void Suurballe(char Start, char Finish)
         {
             var Dijkstra1 = ShortestPath(Start, Finish);
-            var ResidualGraph = Vertices;
+            var ResidualGraph = this;
             foreach (var Vertex in Vertices)
-            {
-                foreach (var Edge in Vertex.Value)
+            {                
+                foreach (var Edge in Vertex.Value.ToList())
                 {
-                    SetEdgeValue(Vertex.Key, Edge.Key, Edge.Value - Dijkstra1.Distances[Edge.Key] + Dijkstra1.Distances[Vertex.Key]);
+                    ResidualGraph.SetEdgeValue(Vertex.Key, Edge.Key, Edge.Value - Dijkstra1.Distances[Edge.Key] + Dijkstra1.Distances[Vertex.Key]);
+                    //replace the cost w(u,v) of every edge (u,v) by w′(u,v) = w(u,v) − d(v) + d(u).
                 }
+                
             }
+            foreach(var Vertex in Dijkstra1.Path)
+            {
+                if (Dijkstra1.Parents.TryGetValue(Vertex, out var value))
+                    ResidualGraph.RemoveEdge(Vertex, Dijkstra1.Parents[Vertex]);
+
+                //Create a residual graph Gt formed from G by removing the edges of G on path P1 that are directed into start
+                if (Dijkstra1.Parents.TryGetValue(Vertex, out var value1))
+                    ResidualGraph.ReverseEdge(Dijkstra1.Parents[Vertex], Vertex);
+                //ResidualGraph.AddEdge(Vertex, Dijkstra1.Parents[Vertex], 0);
+                //reverse the direction of the zero length edges along path P1
+            }
+            var Dijkstra2 = ResidualGraph.ShortestPath(Start, Finish);
+            //Find the shortest path P2 in the residual graph Gt by running Dijkstra's algorithm.
+
+
+            PrintPath(Dijkstra1.Path);
+            PrintPath(Dijkstra2.Path);
+
         }
         public void PrintPath(List<char> Path)
         {
