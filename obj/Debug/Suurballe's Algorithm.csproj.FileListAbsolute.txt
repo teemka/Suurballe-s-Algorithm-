@@ -1,0 +1,6 @@
+c:\users\tomas\documents\visual studio 2017\Projects\Suurballe's Algorithm\Suurballe's Algorithm\obj\Debug\Suurballe's Algorithm.csprojResolveAssemblyReference.cache
+c:\users\tomas\documents\visual studio 2017\Projects\Suurballe's Algorithm\Suurballe's Algorithm\bin\Debug\Suurballe's Algorithm.exe.config
+c:\users\tomas\documents\visual studio 2017\Projects\Suurballe's Algorithm\Suurballe's Algorithm\bin\Debug\Suurballe's Algorithm.exe
+c:\users\tomas\documents\visual studio 2017\Projects\Suurballe's Algorithm\Suurballe's Algorithm\bin\Debug\Suurballe's Algorithm.pdb
+c:\users\tomas\documents\visual studio 2017\Projects\Suurballe's Algorithm\Suurballe's Algorithm\obj\Debug\Suurballe's Algorithm.exe
+c:\users\tomas\documents\visual studio 2017\Projects\Suurballe's Algorithm\Suurballe's Algorithm\obj\Debug\Suurballe's Algorithm.pdb
