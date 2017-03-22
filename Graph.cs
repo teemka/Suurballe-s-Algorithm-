@@ -115,15 +115,16 @@ namespace Suurballe_s_Algorithm
 
                 if (Distances[Smallest] == int.MaxValue)
                 {
-                    break;
+                    throw new Exception("Finish Unreachable");                    
+                    //break;
                 }
 
                 foreach (var Neighbour in Vertices[Smallest])
                 {
-                    var alt = Distances[Smallest] + Neighbour.Value;
-                    if (alt < Distances[Neighbour.Key])
+                    var Alternative = Distances[Smallest] + Neighbour.Value;
+                    if (Alternative < Distances[Neighbour.Key])
                     {
-                        Distances[Neighbour.Key] = alt;
+                        Distances[Neighbour.Key] = Alternative;
                         Parents[Neighbour.Key] = Smallest;
                     }
                 }
