@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Suurballe_s_Algorithm
 {
@@ -26,7 +24,7 @@ namespace Suurballe_s_Algorithm
                 throw new Exception("This vertex is already defined.");
             //Console.WriteLine("This vertex is already defined.");
             else
-                Vertices[name] = null;
+                Vertices[name] = new Dictionary<char, int>();
         }
 
         public void RemoveVertex(char name)
@@ -144,6 +142,7 @@ namespace Suurballe_s_Algorithm
         {
             var Dijkstra1 = ShortestPath(Start, Finish);
             var ResidualGraph = this;
+
             foreach (var Vertex in Vertices) 
             {                
                 foreach (var Edge in Vertex.Value.ToList())
@@ -157,15 +156,12 @@ namespace Suurballe_s_Algorithm
             {
                 if (Dijkstra1.Parents.TryGetValue(Vertex, out var value))
                     if(ResidualGraph.Vertices[Vertex].ContainsKey(value))
-                        ResidualGraph.RemoveEdge(Vertex, value);
-
-                // Create a residual graph Gt formed from G by removing the edges of G on path P1 that are directed into start
+                        ResidualGraph.RemoveEdge(Vertex, value); // Create a residual graph Gt formed from G by removing the edges of G on path P1 that are directed into start.
+               
                 if (Dijkstra1.Parents.TryGetValue(Vertex, out var value1))
-                    ResidualGraph.ReverseEdge(value1, Vertex);
-
-                // ResidualGraph.AddEdge(Vertex, Dijkstra1.Parents[Vertex], 0);
-                // Reverse the direction of the zero length edges along path P1.
-            }// Create a residual graph
+                    ResidualGraph.ReverseEdge(value1, Vertex); // Reverse the direction of the zero length edges along path P1.                
+                
+            } // Create a residual graph.
 
             var Dijkstra2 = ResidualGraph.ShortestPath(Start, Finish);
             //Find the shortest path P2 in the residual graph Gt by running Dijkstra's algorithm.
@@ -191,16 +187,19 @@ namespace Suurballe_s_Algorithm
             FinalPath2.Add(new KeyValuePair<char, char>(Start, Dijkstra2.EdgePath[Start]));// Add first edge to the path.
             Dijkstra2.EdgePath.Remove(Start);// Shorten the Dictionary
 
-            Dictionary<char,char> SharedPoolofEdges = Dijkstra1.EdgePath.Concat(Dijkstra2.EdgePath).ToDictionary(x => x.Key, x => x.Value);
-            //Creates Shared Pool of Edges for paths building
-            while(SharedPoolofEdges.ContainsKey(FinalPath1[FinalPath1.Count - 1].Value))
+            Dictionary<char,char> SharedPoolofEdges = Dijkstra1.EdgePath
+                .Concat(Dijkstra2.EdgePath)
+                .ToDictionary(x => x.Key, x => x.Value); //Creates Shared Pool of Edges for paths building           
+
+            while(SharedPoolofEdges.ContainsKey(FinalPath1.Last().Value))
             {
-                FinalPath1.Add(new KeyValuePair<char, char>(FinalPath1[FinalPath1.Count - 1].Value, SharedPoolofEdges[FinalPath1[FinalPath1.Count - 1].Value]));
+                FinalPath1.Add(new KeyValuePair<char, char>(FinalPath1.Last().Value, SharedPoolofEdges[FinalPath1.Last().Value]));
                 SharedPoolofEdges.Remove(FinalPath1[FinalPath1.Count - 2].Value);
             }// Build Disjoint Path 1 by searching edges outgoing from the vertex at the end of path, while removing edges already added to the Path.
-            while (SharedPoolofEdges.ContainsKey(FinalPath2[FinalPath2.Count - 1].Value))
+
+            while (SharedPoolofEdges.ContainsKey(FinalPath2.Last().Value))
             {
-                FinalPath2.Add(new KeyValuePair<char, char>(FinalPath2[FinalPath2.Count - 1].Value, SharedPoolofEdges[FinalPath2[FinalPath2.Count - 1].Value]));
+                FinalPath2.Add(new KeyValuePair<char, char>(FinalPath2.Last().Value, SharedPoolofEdges[FinalPath2.Last().Value]));
                 SharedPoolofEdges.Remove(FinalPath2[FinalPath2.Count - 2].Value);
             }// Build Disjoint Path 2 by searching edges outgoing from the vertex at the end of path, while removing edges already added to the Path.           
             
