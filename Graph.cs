@@ -139,7 +139,7 @@ namespace Suurballe_s_Algorithm
                 foreach (var Edge in Vertex.Value.ToList())
                 {
                     ResidualGraph.SetEdgeValue(Vertex.Key, Edge.Key, Edge.Value - Dijkstra1.Distances[Edge.Key] + Dijkstra1.Distances[Vertex.Key]);
-                    //replace the cost w(u,v) of every edge (u,v) by w′(u,v) = w(u,v) − d(v) + d(u).
+                    // Replace the cost w(u,v) of every edge (u,v) by w′(u,v) = w(u,v) − d(v) + d(u).
                 }
                 
             }
@@ -148,18 +148,69 @@ namespace Suurballe_s_Algorithm
                 if (Dijkstra1.Parents.TryGetValue(Vertex, out var value))
                     ResidualGraph.RemoveEdge(Vertex, Dijkstra1.Parents[Vertex]);
 
-                //Create a residual graph Gt formed from G by removing the edges of G on path P1 that are directed into start
+                // Create a residual graph Gt formed from G by removing the edges of G on path P1 that are directed into start
                 if (Dijkstra1.Parents.TryGetValue(Vertex, out var value1))
                     ResidualGraph.ReverseEdge(Dijkstra1.Parents[Vertex], Vertex);
-                //ResidualGraph.AddEdge(Vertex, Dijkstra1.Parents[Vertex], 0);
-                //reverse the direction of the zero length edges along path P1
-            }
+
+                // ResidualGraph.AddEdge(Vertex, Dijkstra1.Parents[Vertex], 0);
+                // Reverse the direction of the zero length edges along path P1.
+            }// Create a residual graph
             var Dijkstra2 = ResidualGraph.ShortestPath(Start, Finish);
             //Find the shortest path P2 in the residual graph Gt by running Dijkstra's algorithm.
+            List<KeyValuePair<char, char>> FinalPath1 = new List<KeyValuePair<char, char>>();
+            List<KeyValuePair<char, char>> FinalPath2 = new List<KeyValuePair<char, char>>();
+            foreach (var Node1 in Dijkstra1.DictionaryPath.ToList())
+            {
+                
+                foreach(var Node2 in Dijkstra2.DictionaryPath.ToList())
+                {
+                    if(Node1.Key==Node2.Value&&Node1.Value==Node2.Key)
+                    {
+                        Dijkstra1.DictionaryPath.Remove(Node1.Key);
+                        Dijkstra2.DictionaryPath.Remove(Node2.Key);
+                    }                
+                    
+                }
+            }// Discard the common reversed edges between both paths.
+
+            FinalPath1.Add(new KeyValuePair<char, char>(Start, Dijkstra1.DictionaryPath[Start]));// Initiate Disjoint Path 1
+            Dijkstra1.DictionaryPath.Remove(Start);// Add first edge to the path.
+            FinalPath2.Add(new KeyValuePair<char, char>(Start, Dijkstra2.DictionaryPath[Start]));// Initiate Disjoint Path 2
+            Dijkstra2.DictionaryPath.Remove(Start);// Add first edge to the path.
+            while (Dijkstra1.DictionaryPath.ContainsKey(FinalPath1[FinalPath1.Count - 1].Value) 
+                || Dijkstra2.DictionaryPath.ContainsKey(FinalPath1[FinalPath1.Count - 1].Value))
+            {
+                if (Dijkstra1.DictionaryPath.ContainsKey(FinalPath1[FinalPath1.Count - 1].Value))
+                {
+                    FinalPath1.Add(new KeyValuePair<char, char>(FinalPath1[FinalPath1.Count - 1].Value, Dijkstra1.DictionaryPath[FinalPath1[FinalPath1.Count - 1].Value]));
+                    Dijkstra1.DictionaryPath.Remove(FinalPath1[FinalPath1.Count - 2].Value);
+                }
+                if (Dijkstra2.DictionaryPath.ContainsKey(FinalPath1[FinalPath1.Count - 1].Value))
+                {
+                    FinalPath1.Add(new KeyValuePair<char, char>(FinalPath1[FinalPath1.Count - 1].Value, Dijkstra2.DictionaryPath[FinalPath1[FinalPath1.Count - 1].Value]));
+                    Dijkstra2.DictionaryPath.Remove(FinalPath1[FinalPath1.Count - 2].Value);
+                }
+            }// Build Disjoint Path 1 by searching edges outgoing from the vertex at the end of path, while removing edges already added to the Path.
+            while (Dijkstra1.DictionaryPath.ContainsKey(FinalPath2[FinalPath2.Count - 1].Value)
+                || Dijkstra2.DictionaryPath.ContainsKey(FinalPath2[FinalPath2.Count - 1].Value))
+            {
+                if (Dijkstra1.DictionaryPath.ContainsKey(FinalPath2[FinalPath2.Count - 1].Value))
+                {
+                    FinalPath2.Add(new KeyValuePair<char, char>(FinalPath2[FinalPath2.Count - 1].Value, Dijkstra1.DictionaryPath[FinalPath2[FinalPath2.Count - 1].Value]));
+                    Dijkstra1.DictionaryPath.Remove(FinalPath2[FinalPath2.Count - 2].Value);
+                }
+                if (Dijkstra2.DictionaryPath.ContainsKey(FinalPath2[FinalPath2.Count - 1].Value))
+                {
+                    FinalPath2.Add(new KeyValuePair<char, char>(FinalPath2[FinalPath2.Count - 1].Value, Dijkstra2.DictionaryPath[FinalPath2[FinalPath2.Count - 1].Value]));
+                    Dijkstra2.DictionaryPath.Remove(FinalPath2[FinalPath2.Count - 2].Value);
+                }
+            }// Build Disjoint Path 2 by searching edges outgoing from the vertex at the end of path, while removing edges already added to the Path.
 
 
-            PrintPath(Dijkstra1.Path);
-            PrintPath(Dijkstra2.Path);
+
+            PrintPathListofKeyValuePair(FinalPath1);
+            PrintPathListofKeyValuePair(FinalPath2);
+
 
         }
         public void PrintPath(List<char> Path)
@@ -173,6 +224,26 @@ namespace Suurballe_s_Algorithm
                     Console.Write(Node + " -> ");
             }
             Console.WriteLine("Distance: {0}", PathDistance);
+        }
+        public void PrintDictionaryPath(Dictionary<char, char> DictionaryPath)
+        {
+            var PathListofKeyValuePair = DictionaryPath.ToList();
+            Console.Write(PathListofKeyValuePair[0].Key);
+            foreach(var Node in PathListofKeyValuePair)
+            {
+                Console.Write(" -> " + Node.Value);               
+            }
+            Console.WriteLine();
+        }
+        public void PrintPathListofKeyValuePair(List<KeyValuePair<char, char>> PathListofKeyValuePair)
+        {
+            
+            Console.Write(PathListofKeyValuePair[0].Key);
+            foreach (var Node in PathListofKeyValuePair)
+            {
+                Console.Write(" -> " + Node.Value);
+            }
+            Console.WriteLine();
         }
     }
 }
