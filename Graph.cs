@@ -20,6 +20,7 @@ namespace Suurballe_s_Algorithm
             else
                 Vertices[name] = edges;
         }
+
         public void AddVertex(char name)
         {
             if (Vertices.ContainsKey(name))
@@ -28,6 +29,7 @@ namespace Suurballe_s_Algorithm
             else
                 Vertices[name] = null;
         }
+
         public void RemoveVertex(char name)
         {
             if (Vertices.ContainsKey(name))
@@ -36,10 +38,12 @@ namespace Suurballe_s_Algorithm
                 throw new Exception("Vertex does not exist.");
             //Console.WriteLine("Vertex {0} does not exist.", name);
         }
+
         public void AddEdge(char from, char to, int value)
         {
             Vertices[from].Add(to, value);
         }
+
         public void RemoveEdge(char from, char to)
         {
             if (Vertices[from].ContainsKey(to))
@@ -48,6 +52,7 @@ namespace Suurballe_s_Algorithm
                 throw new Exception("Edge does not exist.");
             //Console.WriteLine("Edge {0} -> {1} does not exist.", from, to);
         }
+
         public int GetEdgeValue(char from, char to)
         {
             if (Vertices[from].ContainsKey(to))
@@ -56,6 +61,7 @@ namespace Suurballe_s_Algorithm
                 throw new Exception("Edge does not exist.");
             //Console.WriteLine("Edge {0} -> {1} does not exist.", from, to);            
         }
+
         public void SetEdgeValue(char from, char to, int value)
         {
             if (Vertices[from].ContainsKey(to))
@@ -64,12 +70,14 @@ namespace Suurballe_s_Algorithm
                 throw new Exception("Edge does not exist.");
             //Console.WriteLine("Edge {0} -> {1} does not exist!", from, to);
         }
+
         public void ReverseEdge(char from, char to)//only works if there is no reversed edge there already
         {
             var value = this.GetEdgeValue(from, to);
             this.RemoveEdge(from, to);
             this.AddEdge(to, from, value);
         }
+
         public DijkstraOut ShortestPath(char Start, char Finish)
         {
             var Parents = new Dictionary<char, char>();
@@ -133,6 +141,7 @@ namespace Suurballe_s_Algorithm
             }
             return new DijkstraOut(Path, Parents, Distances);
         }
+
         public void Suurballe(char Start, char Finish)
         {
             var Dijkstra1 = ShortestPath(Start, Finish);
@@ -145,6 +154,7 @@ namespace Suurballe_s_Algorithm
                 }
 
             } // Replace the cost w(u,v) of every edge (u,v) by w′(u,v) = w(u,v) − d(v) + d(u).
+
             foreach (var Vertex in Dijkstra1.Path)
             {
                 if (Dijkstra1.Parents.TryGetValue(Vertex, out var value))
@@ -158,21 +168,22 @@ namespace Suurballe_s_Algorithm
                 // ResidualGraph.AddEdge(Vertex, Dijkstra1.Parents[Vertex], 0);
                 // Reverse the direction of the zero length edges along path P1.
             }// Create a residual graph
+
             var Dijkstra2 = ResidualGraph.ShortestPath(Start, Finish);
             //Find the shortest path P2 in the residual graph Gt by running Dijkstra's algorithm.
+
             List<KeyValuePair<char, char>> FinalPath1 = new List<KeyValuePair<char, char>>();
             List<KeyValuePair<char, char>> FinalPath2 = new List<KeyValuePair<char, char>>();
+
             foreach (var Node1 in Dijkstra1.DictionaryPath.ToList())
-            {
-                
+            {                
                 foreach(var Node2 in Dijkstra2.DictionaryPath.ToList())
                 {
                     if(Node1.Key==Node2.Value&&Node1.Value==Node2.Key)
                     {
                         Dijkstra1.DictionaryPath.Remove(Node1.Key);
                         Dijkstra2.DictionaryPath.Remove(Node2.Key);
-                    }                
-                    
+                    }            
                 }
             }// Discard the common reversed edges between both paths.
 
@@ -180,42 +191,24 @@ namespace Suurballe_s_Algorithm
             Dijkstra1.DictionaryPath.Remove(Start);// Add first edge to the path.
             FinalPath2.Add(new KeyValuePair<char, char>(Start, Dijkstra2.DictionaryPath[Start]));// Initiate Disjoint Path 2
             Dijkstra2.DictionaryPath.Remove(Start);// Add first edge to the path.
-            while (Dijkstra1.DictionaryPath.ContainsKey(FinalPath1[FinalPath1.Count - 1].Value) 
-                || Dijkstra2.DictionaryPath.ContainsKey(FinalPath1[FinalPath1.Count - 1].Value))
+            Dictionary<char,char> SharedPoolofEdges = Dijkstra1.DictionaryPath.Concat(Dijkstra2.DictionaryPath).ToDictionary(x => x.Key, x => x.Value);
+            //Creates Shared Pool of Edges for paths building
+            while(SharedPoolofEdges.ContainsKey(FinalPath1[FinalPath1.Count - 1].Value))
             {
-                if (Dijkstra1.DictionaryPath.ContainsKey(FinalPath1[FinalPath1.Count - 1].Value))
-                {
-                    FinalPath1.Add(new KeyValuePair<char, char>(FinalPath1[FinalPath1.Count - 1].Value, Dijkstra1.DictionaryPath[FinalPath1[FinalPath1.Count - 1].Value]));
-                    Dijkstra1.DictionaryPath.Remove(FinalPath1[FinalPath1.Count - 2].Value);
-                }
-                if (Dijkstra2.DictionaryPath.ContainsKey(FinalPath1[FinalPath1.Count - 1].Value))
-                {
-                    FinalPath1.Add(new KeyValuePair<char, char>(FinalPath1[FinalPath1.Count - 1].Value, Dijkstra2.DictionaryPath[FinalPath1[FinalPath1.Count - 1].Value]));
-                    Dijkstra2.DictionaryPath.Remove(FinalPath1[FinalPath1.Count - 2].Value);
-                }
+                FinalPath1.Add(new KeyValuePair<char, char>(FinalPath1[FinalPath1.Count - 1].Value, SharedPoolofEdges[FinalPath1[FinalPath1.Count - 1].Value]));
+                SharedPoolofEdges.Remove(FinalPath1[FinalPath1.Count - 2].Value);
             }// Build Disjoint Path 1 by searching edges outgoing from the vertex at the end of path, while removing edges already added to the Path.
-            while (Dijkstra1.DictionaryPath.ContainsKey(FinalPath2[FinalPath2.Count - 1].Value)
-                || Dijkstra2.DictionaryPath.ContainsKey(FinalPath2[FinalPath2.Count - 1].Value))
+            while (SharedPoolofEdges.ContainsKey(FinalPath2[FinalPath2.Count - 1].Value))
             {
-                if (Dijkstra1.DictionaryPath.ContainsKey(FinalPath2[FinalPath2.Count - 1].Value))
-                {
-                    FinalPath2.Add(new KeyValuePair<char, char>(FinalPath2[FinalPath2.Count - 1].Value, Dijkstra1.DictionaryPath[FinalPath2[FinalPath2.Count - 1].Value]));
-                    Dijkstra1.DictionaryPath.Remove(FinalPath2[FinalPath2.Count - 2].Value);
-                }
-                if (Dijkstra2.DictionaryPath.ContainsKey(FinalPath2[FinalPath2.Count - 1].Value))
-                {
-                    FinalPath2.Add(new KeyValuePair<char, char>(FinalPath2[FinalPath2.Count - 1].Value, Dijkstra2.DictionaryPath[FinalPath2[FinalPath2.Count - 1].Value]));
-                    Dijkstra2.DictionaryPath.Remove(FinalPath2[FinalPath2.Count - 2].Value);
-                }
-            }// Build Disjoint Path 2 by searching edges outgoing from the vertex at the end of path, while removing edges already added to the Path.
-
-
-
+                FinalPath2.Add(new KeyValuePair<char, char>(FinalPath2[FinalPath2.Count - 1].Value, SharedPoolofEdges[FinalPath2[FinalPath2.Count - 1].Value]));
+                SharedPoolofEdges.Remove(FinalPath2[FinalPath2.Count - 2].Value);
+            }// Build Disjoint Path 2 by searching edges outgoing from the vertex at the end of path, while removing edges already added to the Path.           
+            
             PrintPathListofKeyValuePair(FinalPath1);
             PrintPathListofKeyValuePair(FinalPath2);
-
-
+            
         }
+
         public void PrintPath(List<char> Path)
         {
             var Last = Path[Path.Count - 1];
@@ -228,6 +221,7 @@ namespace Suurballe_s_Algorithm
             }
             Console.WriteLine("Distance: {0}", PathDistance);
         }
+
         public void PrintDictionaryPath(Dictionary<char, char> DictionaryPath)
         {
             var PathListofKeyValuePair = DictionaryPath.ToList();
@@ -238,6 +232,7 @@ namespace Suurballe_s_Algorithm
             }
             Console.WriteLine();
         }
+
         public void PrintPathListofKeyValuePair(List<KeyValuePair<char, char>> PathListofKeyValuePair)
         {
             
@@ -248,5 +243,6 @@ namespace Suurballe_s_Algorithm
             }
             Console.WriteLine();
         }
+
     }
 }
