@@ -18,10 +18,16 @@ namespace Suurballe_s_Algorithm
             Parents = _Parents;
             Distances = _Distances;
             Dictionary<char, char> DictionaryPathTemp = new Dictionary<char, char>();
+            var Previous = Path[0];
             foreach (var Node in Path)
             {
-                if (Parents.ContainsKey(Node))DictionaryPathTemp[Parents[Node]] = Node;               
                 
+#pragma warning disable CS0642 // Possible mistaken empty statement
+                if (Node == Path[0]) ;
+#pragma warning restore CS0642 // Possible mistaken empty statement
+                else
+                DictionaryPathTemp.Add(Previous,Node);               
+                Previous = Node;
             }
             DictionaryPath = DictionaryPathTemp;
         }        

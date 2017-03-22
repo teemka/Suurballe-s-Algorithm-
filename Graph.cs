@@ -86,7 +86,7 @@ namespace Suurballe_s_Algorithm
                 }
                 else
                 {
-                    Distances[Vertex.Key] = int.MaxValue;
+                    Distances[Vertex.Key] = int.MaxValue-100; // Watch out for stack overflow.
                 }
 
                 Nodes.Add(Vertex.Key);
@@ -110,15 +110,17 @@ namespace Suurballe_s_Algorithm
                     }
                     Path.Add(Start);
                     Path.Reverse();
-                    break;
+                    //break; 
+                    /* This break and if statement below stop the while loop from finding shortest path three for every node.
+                    Without them the algorithm calculates shortest route for every Vertex.*/
                 }
-
+                /* 
                 if (Distances[Smallest] == int.MaxValue)
                 {
                     throw new Exception("Finish Unreachable");                    
                     //break;
                 }
-
+                */
                 foreach (var Neighbour in Vertices[Smallest])
                 {
                     var Alternative = Distances[Smallest] + Neighbour.Value;
@@ -135,23 +137,23 @@ namespace Suurballe_s_Algorithm
         {
             var Dijkstra1 = ShortestPath(Start, Finish);
             var ResidualGraph = this;
-            foreach (var Vertex in Vertices)
+            foreach (var Vertex in Vertices) 
             {                
                 foreach (var Edge in Vertex.Value.ToList())
                 {
-                    ResidualGraph.SetEdgeValue(Vertex.Key, Edge.Key, Edge.Value - Dijkstra1.Distances[Edge.Key] + Dijkstra1.Distances[Vertex.Key]);
-                    // Replace the cost w(u,v) of every edge (u,v) by w′(u,v) = w(u,v) − d(v) + d(u).
+                    ResidualGraph.SetEdgeValue(Vertex.Key, Edge.Key, Edge.Value - Dijkstra1.Distances[Edge.Key] + Dijkstra1.Distances[Vertex.Key]);                   
                 }
-                
-            }
-            foreach(var Vertex in Dijkstra1.Path)
+
+            } // Replace the cost w(u,v) of every edge (u,v) by w′(u,v) = w(u,v) − d(v) + d(u).
+            foreach (var Vertex in Dijkstra1.Path)
             {
                 if (Dijkstra1.Parents.TryGetValue(Vertex, out var value))
-                    ResidualGraph.RemoveEdge(Vertex, Dijkstra1.Parents[Vertex]);
+                    if(ResidualGraph.Vertices[Vertex].ContainsKey(value))
+                        ResidualGraph.RemoveEdge(Vertex, value);
 
                 // Create a residual graph Gt formed from G by removing the edges of G on path P1 that are directed into start
                 if (Dijkstra1.Parents.TryGetValue(Vertex, out var value1))
-                    ResidualGraph.ReverseEdge(Dijkstra1.Parents[Vertex], Vertex);
+                    ResidualGraph.ReverseEdge(value1, Vertex);
 
                 // ResidualGraph.AddEdge(Vertex, Dijkstra1.Parents[Vertex], 0);
                 // Reverse the direction of the zero length edges along path P1.
