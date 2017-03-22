@@ -11,7 +11,7 @@ namespace Suurballe_s_Algorithm
         public List<char> Path { get; set; }
         public Dictionary<char, char> Parents { get; set; }
         public Dictionary<char, int> Distances { get; set; }
-        public Dictionary<char,char> DictionaryPath { get; set; }
+        public Dictionary<char,char> EdgePath { get; set; }
         public DijkstraOut(List<char> _Path, Dictionary<char, char> _Parents, Dictionary<char, int> _Distances)
         {
             Path = _Path;
@@ -20,8 +20,7 @@ namespace Suurballe_s_Algorithm
             Dictionary<char, char> DictionaryPathTemp = new Dictionary<char, char>();
             var Previous = Path[0];
             foreach (var Node in Path)
-            {
-                
+            {                
 #pragma warning disable CS0642 // Possible mistaken empty statement
                 if (Node == Path[0]) ;
 #pragma warning restore CS0642 // Possible mistaken empty statement
@@ -29,7 +28,7 @@ namespace Suurballe_s_Algorithm
                 DictionaryPathTemp.Add(Previous,Node);               
                 Previous = Node;
             }
-            DictionaryPath = DictionaryPathTemp;
+            EdgePath = DictionaryPathTemp;
         }        
     }
 

@@ -8,8 +8,7 @@ namespace Suurballe_s_Algorithm
 {
     class Graph
     {
-        public int PathDistance { get; set; }
-
+       
         Dictionary<char, Dictionary<char, int>> Vertices = new Dictionary<char, Dictionary<char, int>>();
 
         public void AddVertexAndOutgoingEdges(char name, Dictionary<char, int> edges)
@@ -94,7 +93,7 @@ namespace Suurballe_s_Algorithm
                 }
                 else
                 {
-                    Distances[Vertex.Key] = int.MaxValue-100; // Watch out for stack overflow.
+                    Distances[Vertex.Key] = int.MaxValue-1000; // Watch out for stack overflow.
                 }
 
                 Nodes.Add(Vertex.Key);
@@ -108,8 +107,7 @@ namespace Suurballe_s_Algorithm
                 Nodes.Remove(Smallest);
 
                 if (Smallest == Finish)
-                {
-                    PathDistance = Distances[Finish];
+                {                    
                     Path = new List<char>();
                     while (Parents.ContainsKey(Smallest))
                     {
@@ -119,8 +117,8 @@ namespace Suurballe_s_Algorithm
                     Path.Add(Start);
                     Path.Reverse();
                     //break; 
-                    /* This break and if statement below stop the while loop from finding shortest path three for every node.
-                    Without them the algorithm calculates shortest route for every Vertex.*/
+                    /*  ^ This break and if statement below stop the while loop earlier.
+                    Without them the algorithm calculates shortest route tree.*/
                 }
                 /* 
                 if (Distances[Smallest] == int.MaxValue)
@@ -175,23 +173,25 @@ namespace Suurballe_s_Algorithm
             List<KeyValuePair<char, char>> FinalPath1 = new List<KeyValuePair<char, char>>();
             List<KeyValuePair<char, char>> FinalPath2 = new List<KeyValuePair<char, char>>();
 
-            foreach (var Node1 in Dijkstra1.DictionaryPath.ToList())
+            foreach (var Node1 in Dijkstra1.EdgePath.ToList())
             {                
-                foreach(var Node2 in Dijkstra2.DictionaryPath.ToList())
+                foreach(var Node2 in Dijkstra2.EdgePath.ToList())
                 {
                     if(Node1.Key==Node2.Value&&Node1.Value==Node2.Key)
                     {
-                        Dijkstra1.DictionaryPath.Remove(Node1.Key);
-                        Dijkstra2.DictionaryPath.Remove(Node2.Key);
+                        Dijkstra1.EdgePath.Remove(Node1.Key);
+                        Dijkstra2.EdgePath.Remove(Node2.Key);
                     }            
                 }
             }// Discard the common reversed edges between both paths.
 
-            FinalPath1.Add(new KeyValuePair<char, char>(Start, Dijkstra1.DictionaryPath[Start]));// Initiate Disjoint Path 1
-            Dijkstra1.DictionaryPath.Remove(Start);// Add first edge to the path.
-            FinalPath2.Add(new KeyValuePair<char, char>(Start, Dijkstra2.DictionaryPath[Start]));// Initiate Disjoint Path 2
-            Dijkstra2.DictionaryPath.Remove(Start);// Add first edge to the path.
-            Dictionary<char,char> SharedPoolofEdges = Dijkstra1.DictionaryPath.Concat(Dijkstra2.DictionaryPath).ToDictionary(x => x.Key, x => x.Value);
+            FinalPath1.Add(new KeyValuePair<char, char>(Start, Dijkstra1.EdgePath[Start]));// Add first edge to the path.
+            Dijkstra1.EdgePath.Remove(Start);// Shorten the Dictionary
+
+            FinalPath2.Add(new KeyValuePair<char, char>(Start, Dijkstra2.EdgePath[Start]));// Add first edge to the path.
+            Dijkstra2.EdgePath.Remove(Start);// Shorten the Dictionary
+
+            Dictionary<char,char> SharedPoolofEdges = Dijkstra1.EdgePath.Concat(Dijkstra2.EdgePath).ToDictionary(x => x.Key, x => x.Value);
             //Creates Shared Pool of Edges for paths building
             while(SharedPoolofEdges.ContainsKey(FinalPath1[FinalPath1.Count - 1].Value))
             {
@@ -219,7 +219,6 @@ namespace Suurballe_s_Algorithm
                 else
                     Console.Write(Node + " -> ");
             }
-            Console.WriteLine("Distance: {0}", PathDistance);
         }
 
         public void PrintDictionaryPath(Dictionary<char, char> DictionaryPath)

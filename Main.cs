@@ -50,7 +50,7 @@ namespace Suurballe_s_Algorithm
             //g.PrintPath(g.ShortestPath('A', 'F').Path);
 
             //g.Suurballe('A', 'J');
-            g.Suurballe('A', 'J');
+            g.Suurballe('A', 'I');
 
             Console.ReadLine();
         }
