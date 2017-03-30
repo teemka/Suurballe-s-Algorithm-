@@ -53,16 +53,15 @@ namespace Suurballe_s_Algorithm
             Console.Write("Give finish vertex:\t");
             finish = Console.ReadLine();
 
-            //try
-            //{
-                g.SuurballeDisjointVertices(start, finish);
+            try
+            {
                 //g.PrintPath(g.ShortestPath(start, finish).Path);
-            //}
-            
-            /*catch (Exception e)
+                g.SuurballeDisjointVertices(start, finish);                
+            }            
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-            }*/
+            }
             Console.ReadLine();
         }
     }

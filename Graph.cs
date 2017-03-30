@@ -261,17 +261,10 @@ namespace Suurballe_s_Algorithm
                 return;
             }
             Dictionary<string, string> SharedPoolofEdges = new Dictionary<string, string>();
-            try
-            {
-                SharedPoolofEdges = Dijkstra1.EdgePath
+            SharedPoolofEdges = Dijkstra1.EdgePath
                 .Concat(Dijkstra2.EdgePath)
                 .ToDictionary(x => x.Key, x => x.Value); //Creates Shared Pool of Edges for paths building           
-            }
-            catch
-            {
-                Console.WriteLine("Paths are vertex joint");
-                return;
-            }
+            
             while(SharedPoolofEdges.ContainsKey(FinalPath1.Last().Value))
             {
                 FinalPath1.Add(new KeyValuePair<string, string>(FinalPath1.Last().Value, SharedPoolofEdges[FinalPath1.Last().Value]));
@@ -347,29 +340,34 @@ namespace Suurballe_s_Algorithm
                 Console.WriteLine("Impossible to find two paths");
                 return;
             }
-            Dictionary<string, string> SharedPoolofEdges = new Dictionary<string, string>();
-            try
+            while (Dijkstra1.EdgePath.ContainsKey(FinalPath1[FinalPath1.Count - 1].Value)
+               || Dijkstra2.EdgePath.ContainsKey(FinalPath1[FinalPath1.Count - 1].Value))
             {
-                SharedPoolofEdges = Dijkstra1.EdgePath
-                .Concat(Dijkstra2.EdgePath)
-                .ToDictionary(x => x.Key, x => x.Value); //Creates Shared Pool of Edges for paths building           
-            }
-            catch
-            {
-                Console.WriteLine("Paths are vertex joint");
-                return;
-            }
-            while (SharedPoolofEdges.ContainsKey(FinalPath1.Last().Value))
-            {
-                FinalPath1.Add(new KeyValuePair<string, string>(FinalPath1.Last().Value, SharedPoolofEdges[FinalPath1.Last().Value]));
-                SharedPoolofEdges.Remove(FinalPath1[FinalPath1.Count - 2].Value);
+                if (Dijkstra1.EdgePath.ContainsKey(FinalPath1[FinalPath1.Count - 1].Value))
+                {
+                    FinalPath1.Add(new KeyValuePair<string, string>(FinalPath1[FinalPath1.Count - 1].Value, Dijkstra1.EdgePath[FinalPath1[FinalPath1.Count - 1].Value]));
+                    Dijkstra1.EdgePath.Remove(FinalPath1[FinalPath1.Count - 2].Value);
+                }
+                if (Dijkstra2.EdgePath.ContainsKey(FinalPath1[FinalPath1.Count - 1].Value))
+                {
+                    FinalPath1.Add(new KeyValuePair<string, string>(FinalPath1[FinalPath1.Count - 1].Value, Dijkstra2.EdgePath[FinalPath1[FinalPath1.Count - 1].Value]));
+                    Dijkstra2.EdgePath.Remove(FinalPath1[FinalPath1.Count - 2].Value);
+                }
             }// Build Disjoint Path 1 by searching edges outgoing from the vertex at the end of path, while removing edges already added to the Path.
-
-            while (SharedPoolofEdges.ContainsKey(FinalPath2.Last().Value))
+            while (Dijkstra1.EdgePath.ContainsKey(FinalPath2[FinalPath2.Count - 1].Value)
+                || Dijkstra2.EdgePath.ContainsKey(FinalPath2[FinalPath2.Count - 1].Value))
             {
-                FinalPath2.Add(new KeyValuePair<string, string>(FinalPath2.Last().Value, SharedPoolofEdges[FinalPath2.Last().Value]));
-                SharedPoolofEdges.Remove(FinalPath2[FinalPath2.Count - 2].Value);
-            }// Build Disjoint Path 2 by searching edges outgoing from the vertex at the end of path, while removing edges already added to the Path.           
+                if (Dijkstra1.EdgePath.ContainsKey(FinalPath2[FinalPath2.Count - 1].Value))
+                {
+                    FinalPath2.Add(new KeyValuePair<string, string>(FinalPath2[FinalPath2.Count - 1].Value, Dijkstra1.EdgePath[FinalPath2[FinalPath2.Count - 1].Value]));
+                    Dijkstra1.EdgePath.Remove(FinalPath2[FinalPath2.Count - 2].Value);
+                }
+                if (Dijkstra2.EdgePath.ContainsKey(FinalPath2[FinalPath2.Count - 1].Value))
+                {
+                    FinalPath2.Add(new KeyValuePair<string, string>(FinalPath2[FinalPath2.Count - 1].Value, Dijkstra2.EdgePath[FinalPath2[FinalPath2.Count - 1].Value]));
+                    Dijkstra2.EdgePath.Remove(FinalPath2[FinalPath2.Count - 2].Value);
+                }
+            }// Build Disjoint Path 2 by searching edges outgoing from the vertex at the end of path, while removing edges already added to the Path. 
 
             PrintPathListofKeyValuePair(FinalPath1);
             PrintPathListofKeyValuePair(FinalPath2);
@@ -414,9 +412,9 @@ namespace Suurballe_s_Algorithm
             }
         }
 
-        public void PrintDictionaryPath(Dictionary<string, string> DictionaryPath)
+        public void PrintEdgePath(Dictionary<string, string> EdgePath)
         {
-            var PathListofKeyValuePair = DictionaryPath.ToList();
+            var PathListofKeyValuePair = EdgePath.ToList();
             Console.Write(PathListofKeyValuePair[0].Key);
             foreach(var Node in PathListofKeyValuePair)
             {
