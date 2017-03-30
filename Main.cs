@@ -35,7 +35,11 @@ namespace Suurballe_s_Algorithm
             g.AddVertexAndOutgoingEdges("I", new Dictionary<string, int>() { { "G", 4 }, { "H", 1 }, { "J", 1 } });
             g.AddVertexAndOutgoingEdges("J", new Dictionary<string, int>() { { "H", 4 }, { "I", 1 } });
             */
+<<<<<<< HEAD
 
+=======
+            
+>>>>>>> 111f27b90bc51b687419519041ca087becbc99e8
             g.AddVertexAndOutgoingEdges("A", new Dictionary<string, int>() { { "E", 1 }, { "B", 3 } });
             g.AddVertexAndOutgoingEdges("B", new Dictionary<string, int>() { { "C", 1 } });
             g.AddVertexAndOutgoingEdges("C", new Dictionary<string, int>() { { "H", 1 }, { "E", 1 }, { "D", 1 } });
@@ -54,7 +58,11 @@ namespace Suurballe_s_Algorithm
             //g.PrintPath(g.ShortestPath("A", "F").Path);
 
             //g.Suurballe("A", "J");
+<<<<<<< HEAD
             g.Suurballe(start ,finish);
+=======
+            g.Suurballe("A", "C");
+>>>>>>> 111f27b90bc51b687419519041ca087becbc99e8
 
             Console.ReadLine();
         }
