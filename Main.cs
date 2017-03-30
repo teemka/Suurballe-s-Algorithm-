@@ -25,7 +25,7 @@ namespace Suurballe_s_Algorithm
             g.AddVertexAndOutgoingEdges("B", new Dictionary<string, int>() { { "A", 1 }, { "D", 1 } });
             g.AddVertexAndOutgoingEdges("C", new Dictionary<string, int>() { { "A", 3 }, { "E", 3 } });
             g.AddVertexAndOutgoingEdges("D", new Dictionary<string, int>() { { "B", 1 }, { "E", 1 }, { "F", 4 } });
-            g.AddVertexAndOutgoingEdges("E", new Dictionary<string, int>() { { "C", 3 }, { "D", 1 }, { "G", 1 } });
+            g.AddVertexAndOutgoingEdges("E", new Dictionary<string, int>() { { "C", 3 }, { "D", 1 }, { "G", 1 }, { "F", 1 } });
             g.AddVertexAndOutgoingEdges("F", new Dictionary<string, int>() { { "D", 4 }, { "G", 1 }, { "H", 1 } });
             g.AddVertexAndOutgoingEdges("G", new Dictionary<string, int>() { { "F", 1 }, { "E", 1 }, { "I", 4 } });
             g.AddVertexAndOutgoingEdges("H", new Dictionary<string, int>() { { "F", 1 }, { "I", 1 }, { "J", 4 } });
@@ -53,16 +53,16 @@ namespace Suurballe_s_Algorithm
             Console.Write("Give finish vertex:\t");
             finish = Console.ReadLine();
 
-            try
-            {
-                g.Suurballe(start, finish);
+            //try
+            //{
+                g.SuurballeDisjointVertices(start, finish);
                 //g.PrintPath(g.ShortestPath(start, finish).Path);
-            }
+            //}
             
-            catch (Exception e)
+            /*catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-            }
+            }*/
             Console.ReadLine();
         }
     }
