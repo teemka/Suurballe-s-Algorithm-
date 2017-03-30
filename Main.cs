@@ -8,7 +8,11 @@ namespace Suurballe_s_Algorithm
         public static void Main(string[] args)
         {
             Graph g = new Graph();
-
+            string start, finish;
+            Console.Write("Give start node:\t");
+            start=Console.ReadLine();
+            Console.Write("Give finish node:\t");
+            finish=Console.ReadLine();
             //Example from https://en.wikipedia.org/wiki/Suurballe's_algorithm
             /*
             g.AddVertexAndOutgoingEdges("A", new Dictionary<string, int>() { { "B", 1 }, { "C", 2 } });
@@ -31,7 +35,7 @@ namespace Suurballe_s_Algorithm
             g.AddVertexAndOutgoingEdges("I", new Dictionary<string, int>() { { "G", 4 }, { "H", 1 }, { "J", 1 } });
             g.AddVertexAndOutgoingEdges("J", new Dictionary<string, int>() { { "H", 4 }, { "I", 1 } });
             */
-            
+
             g.AddVertexAndOutgoingEdges("A", new Dictionary<string, int>() { { "E", 1 }, { "B", 3 } });
             g.AddVertexAndOutgoingEdges("B", new Dictionary<string, int>() { { "C", 1 } });
             g.AddVertexAndOutgoingEdges("C", new Dictionary<string, int>() { { "H", 1 }, { "E", 1 }, { "D", 1 } });
@@ -50,7 +54,7 @@ namespace Suurballe_s_Algorithm
             //g.PrintPath(g.ShortestPath("A", "F").Path);
 
             //g.Suurballe("A", "J");
-            g.Suurballe("A", "C");
+            g.Suurballe(start ,finish);
 
             Console.ReadLine();
         }

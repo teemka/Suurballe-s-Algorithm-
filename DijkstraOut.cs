@@ -16,11 +16,8 @@ namespace Suurballe_s_Algorithm
             Dictionary<string, string> DictionaryPathTemp = new Dictionary<string, string>();
             var Previous = Path[0];
             foreach (var Node in Path)
-            {                
-#pragma warning disable CS0642 // Possible mistaken empty statement
-                if (Node == Path[0]) ;
-#pragma warning restore CS0642 // Possible mistaken empty statement
-                else
+            {             
+                if (Node != Path[0])
                 DictionaryPathTemp.Add(Previous,Node);               
                 Previous = Node;
             }
