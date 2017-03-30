@@ -78,15 +78,10 @@ namespace Suurballe_s_Algorithm
         public DijkstraOut ShortestPath(string Start, string Finish)
         {
             if (!Vertices.ContainsKey(Start))
-            {
-                Console.WriteLine("Graph does not contain defined starting Vertex");
-                return null;
-            }
+                throw new Exception("Graph does not contain defined start vertex");
             if (!Vertices.ContainsKey(Finish))
-            {
-                Console.WriteLine("Graph does not contain defined finish Vertex");
-                return null;
-            }
+                throw new Exception("Graph does not contain defined finish vertex");
+
             var Parents = new Dictionary<string, string>();
             var Distances = new Dictionary<string, int>();
             var Nodes = new List<string>();
@@ -126,7 +121,7 @@ namespace Suurballe_s_Algorithm
                     Path.Reverse();
                     //break; 
                     /*  ^ This break and if statement below stop the while loop earlier.
-                    Without them the algorithm calculates shortest route tree.*/
+                    Without them the algorithm calculates shortest route tree of whole graph.*/
                 }
                 /* 
                 if (Distances[Smallest] == int.MaxValue)
@@ -151,15 +146,10 @@ namespace Suurballe_s_Algorithm
         public void Suurballe(string Start, string Finish)
         {
             if (!Vertices.ContainsKey(Start))
-            {
-                Console.WriteLine("Graph does not contain defined starting Vertex");
-                return;
-            }
+                throw new Exception("Graph does not contain defined start vertex");
             if (!Vertices.ContainsKey(Finish))
-            {
-                Console.WriteLine("Graph does not contain defined finish Vertex");
-                return;
-            }
+                throw new Exception("Graph does not contain defined finish vertex");
+
             var Dijkstra1 = ShortestPath(Start, Finish);
             var ResidualGraph = this; //It does not create a copy
 
@@ -213,10 +203,18 @@ namespace Suurballe_s_Algorithm
                 Console.WriteLine("Impossible to find two paths");
                 return;
             }
-            Dictionary<string,string> SharedPoolofEdges = Dijkstra1.EdgePath
+            Dictionary<string, string> SharedPoolofEdges = new Dictionary<string, string>();
+            try
+            {
+                SharedPoolofEdges = Dijkstra1.EdgePath
                 .Concat(Dijkstra2.EdgePath)
                 .ToDictionary(x => x.Key, x => x.Value); //Creates Shared Pool of Edges for paths building           
-
+            }
+            catch
+            {
+                Console.WriteLine("Cannot find paths without joint vertex.");
+                return;
+            }
             while(SharedPoolofEdges.ContainsKey(FinalPath1.Last().Value))
             {
                 FinalPath1.Add(new KeyValuePair<string, string>(FinalPath1.Last().Value, SharedPoolofEdges[FinalPath1.Last().Value]));

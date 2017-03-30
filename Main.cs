@@ -20,7 +20,7 @@ namespace Suurballe_s_Algorithm
             g.AddVertexAndOutgoingEdges("F", new Dictionary<string, int>() { { "D", 1 }, { "E", 2 } });
             //g.AddVertex("Z");
             */
-            /*
+            
             g.AddVertexAndOutgoingEdges("A", new Dictionary<string, int>() { { "B", 1 }, { "C", 3 } });
             g.AddVertexAndOutgoingEdges("B", new Dictionary<string, int>() { { "A", 1 }, { "D", 1 } });
             g.AddVertexAndOutgoingEdges("C", new Dictionary<string, int>() { { "A", 3 }, { "E", 3 } });
@@ -31,11 +31,11 @@ namespace Suurballe_s_Algorithm
             g.AddVertexAndOutgoingEdges("H", new Dictionary<string, int>() { { "F", 1 }, { "I", 1 }, { "J", 4 } });
             g.AddVertexAndOutgoingEdges("I", new Dictionary<string, int>() { { "G", 4 }, { "H", 1 }, { "J", 1 } });
             g.AddVertexAndOutgoingEdges("J", new Dictionary<string, int>() { { "H", 4 }, { "I", 1 } });
-            */
-
+            
+            /*
             g.AddVertexAndOutgoingEdges("A", new Dictionary<string, int>() { { "E", 1 }, { "B", 3 } });
             g.AddVertexAndOutgoingEdges("B", new Dictionary<string, int>() { { "C", 1 } });
-            g.AddVertexAndOutgoingEdges("C", new Dictionary<string, int>() { { "H", 1 }, { "E", 1 }, { "D", 1 } });
+            g.AddVertexAndOutgoingEdges("C", new Dictionary<string, int>() { { "H", 1 }, { "E", 1 } });
             g.AddVertexAndOutgoingEdges("D", new Dictionary<string, int>() { { "E", 3 }, { "C", 1 } });
             g.AddVertexAndOutgoingEdges("E", new Dictionary<string, int>() { { "A", 1 }, { "F", 2 } });
             g.AddVertexAndOutgoingEdges("F", new Dictionary<string, int>() { { "G", 3 } });
@@ -46,18 +46,23 @@ namespace Suurballe_s_Algorithm
             g.AddVertexAndOutgoingEdges("K", new Dictionary<string, int>() { { "J", 2 }, { "M", 1 } });
             g.AddVertexAndOutgoingEdges("L", new Dictionary<string, int>() { { "I", 1 }, { "M", 3 } });
             g.AddVertexAndOutgoingEdges("M", new Dictionary<string, int>() { { "K", 1 }, { "L", 3 } });
-            g.SetEdgeValue("L", "M", 10);          
-            
-
-            Console.Write("Give start node:\t");
+            */
+                        
+            Console.Write("Give start vertex:\t");
             start = Console.ReadLine();
-            Console.Write("Give finish node:\t");
+            Console.Write("Give finish vertex:\t");
             finish = Console.ReadLine();
 
-            g.Suurballe(start ,finish);
-
-            //g.PrintPath(g.ShortestPath(start, finish).Path);
-
+            try
+            {
+                g.Suurballe(start, finish);
+                //g.PrintPath(g.ShortestPath(start, finish).Path);
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
             Console.ReadLine();
         }
     }
