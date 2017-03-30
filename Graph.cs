@@ -180,13 +180,19 @@ namespace Suurballe_s_Algorithm
                     }            
                 }
             }// Discard the common reversed edges between both paths.
+            try
+            {
+                FinalPath1.Add(new KeyValuePair<string, string>(Start, Dijkstra1.EdgePath[Start]));// Add first edge to the path.
+                Dijkstra1.EdgePath.Remove(Start);// Shorten the Dictionary
 
-            FinalPath1.Add(new KeyValuePair<string, string>(Start, Dijkstra1.EdgePath[Start]));// Add first edge to the path.
-            Dijkstra1.EdgePath.Remove(Start);// Shorten the Dictionary
-
-            FinalPath2.Add(new KeyValuePair<string, string>(Start, Dijkstra2.EdgePath[Start]));// Add first edge to the path.
-            Dijkstra2.EdgePath.Remove(Start);// Shorten the Dictionary
-
+                FinalPath2.Add(new KeyValuePair<string, string>(Start, Dijkstra2.EdgePath[Start]));// Add first edge to the path.
+                Dijkstra2.EdgePath.Remove(Start);// Shorten the Dictionary
+            }
+            catch
+            {
+                Console.WriteLine("Impossible to find two paths");
+                return;
+            }
             Dictionary<string,string> SharedPoolofEdges = Dijkstra1.EdgePath
                 .Concat(Dijkstra2.EdgePath)
                 .ToDictionary(x => x.Key, x => x.Value); //Creates Shared Pool of Edges for paths building           
