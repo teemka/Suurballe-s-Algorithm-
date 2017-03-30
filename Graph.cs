@@ -6,14 +6,12 @@ namespace Suurballe_s_Algorithm
 {
     class Graph
     {
-       
-        Dictionary<string, Dictionary<string, int>> Vertices = new Dictionary<string, Dictionary<string, int>>();
 
+        Dictionary<string, Dictionary<string, int>> Vertices = new Dictionary<string, Dictionary<string, int>>();        
         public void AddVertexAndOutgoingEdges(string name, Dictionary<string, int> edges)
         {
             if (Vertices.ContainsKey(name))
                 throw new Exception("This vertex is already defined.");
-            //Console.WriteLine("This vertex is already defined.");
             else
                 Vertices[name] = edges;
         }
@@ -22,7 +20,6 @@ namespace Suurballe_s_Algorithm
         {
             if (Vertices.ContainsKey(name))
                 throw new Exception("This vertex is already defined.");
-            //Console.WriteLine("This vertex is already defined.");
             else
                 Vertices[name] = new Dictionary<string, int>();
         }
@@ -33,7 +30,6 @@ namespace Suurballe_s_Algorithm
                 Vertices.Remove(name);
             else
                 throw new Exception("Vertex does not exist.");
-            //Console.WriteLine("Vertex {0} does not exist.", name);
         }
 
         public void AddEdge(string from, string to, int value)
@@ -47,7 +43,6 @@ namespace Suurballe_s_Algorithm
                 Vertices[from].Remove(to);
             else
                 throw new Exception("Edge does not exist.");
-            //Console.WriteLine("Edge {0} -> {1} does not exist.", from, to);
         }
 
         public int GetEdgeValue(string from, string to)
@@ -55,8 +50,7 @@ namespace Suurballe_s_Algorithm
             if (Vertices[from].ContainsKey(to))
                 return Vertices[from][to];
             else
-                throw new Exception("Edge does not exist.");
-            //Console.WriteLine("Edge {0} -> {1} does not exist.", from, to);            
+                throw new Exception("Edge does not exist.");                      
         }
 
         public void SetEdgeValue(string from, string to, int value)
@@ -64,19 +58,35 @@ namespace Suurballe_s_Algorithm
             if (Vertices[from].ContainsKey(to))
                 Vertices[from][to] = value;
             else
-                throw new Exception("Edge does not exist.");
-            //Console.WriteLine("Edge {0} -> {1} does not exist!", from, to);
+                throw new Exception("Edge does not exist.");            
         }
 
-        public void ReverseEdge(string from, string to)//only works if there is no reversed edge there already
-        {
-            var value = this.GetEdgeValue(from, to);
-            this.RemoveEdge(from, to);
-            this.AddEdge(to, from, value);
+        public void ReverseEdge(string from, string to)
+        {           
+            try
+            {
+                var value = this.GetEdgeValue(from, to);
+                this.RemoveEdge(from, to);
+                this.AddEdge(to, from, value);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);                
+            }
         }
 
         public DijkstraOut ShortestPath(string Start, string Finish)
         {
+            if (!Vertices.ContainsKey(Start))
+            {
+                Console.WriteLine("Graph does not contain defined starting Vertex");
+                return null;
+            }
+            if (!Vertices.ContainsKey(Finish))
+            {
+                Console.WriteLine("Graph does not contain defined finish Vertex");
+                return null;
+            }
             var Parents = new Dictionary<string, string>();
             var Distances = new Dictionary<string, int>();
             var Nodes = new List<string>();
@@ -99,7 +109,7 @@ namespace Suurballe_s_Algorithm
 
             while (Nodes.Count != 0)
             {
-                Nodes.Sort((x, y) => Distances[x] - Distances[y]);
+                Nodes.Sort((x, y) => Distances[x] - Distances[y]); //Priority Queue
 
                 var Smallest = Nodes[0];
                 Nodes.Remove(Smallest);
@@ -140,8 +150,18 @@ namespace Suurballe_s_Algorithm
 
         public void Suurballe(string Start, string Finish)
         {
+            if (!Vertices.ContainsKey(Start))
+            {
+                Console.WriteLine("Graph does not contain defined starting Vertex");
+                return;
+            }
+            if (!Vertices.ContainsKey(Finish))
+            {
+                Console.WriteLine("Graph does not contain defined finish Vertex");
+                return;
+            }
             var Dijkstra1 = ShortestPath(Start, Finish);
-            var ResidualGraph = this;
+            var ResidualGraph = this; //It does not create a copy
 
             foreach (var Vertex in Vertices) 
             {                
