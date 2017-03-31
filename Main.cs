@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.IO;
 
 namespace Suurballe_s_Algorithm
 {
@@ -8,8 +9,23 @@ namespace Suurballe_s_Algorithm
         public static void Main(string[] args)
         {
             Graph g = new Graph();
-            string start, finish;
-            
+            string start, finish, line;
+            int lineNumber = 0;
+            System.IO.StreamReader file = new System.IO.StreamReader(@"C:\Users\tomas\Downloads\network_3hE8S8ohRErocpkY7uJW4a.gdf");
+            while ((line = file.ReadLine()) != null)
+            {
+                string[] fields = line.Split(',');
+                if (lineNumber > 0 && lineNumber < 234)
+                {
+                    g.AddVertexName(fields[0], fields[1]);
+                }
+                if (lineNumber > 235)
+                {
+                    g.AddEdge(fields[0], fields[1], 1);
+                    g.AddEdge(fields[1], fields[0], 1);
+                }
+                lineNumber++;
+            }            
             //Example from https://en.wikipedia.org/wiki/Suurballe's_algorithm
             /*
             g.AddVertexAndOutgoingEdges("A", new Dictionary<string, int>() { { "B", 1 }, { "C", 2 } });
@@ -20,7 +36,7 @@ namespace Suurballe_s_Algorithm
             g.AddVertexAndOutgoingEdges("F", new Dictionary<string, int>() { { "D", 1 }, { "E", 2 } });
             //g.AddVertex("Z");
             */
-            
+            /*
             g.AddVertexAndOutgoingEdges("A", new Dictionary<string, int>() { { "B", 1 }, { "C", 3 } });
             g.AddVertexAndOutgoingEdges("B", new Dictionary<string, int>() { { "A", 1 }, { "D", 1 } });
             g.AddVertexAndOutgoingEdges("C", new Dictionary<string, int>() { { "A", 3 }, { "E", 3 } });
@@ -31,7 +47,7 @@ namespace Suurballe_s_Algorithm
             g.AddVertexAndOutgoingEdges("H", new Dictionary<string, int>() { { "F", 1 }, { "I", 1 }, { "J", 4 } });
             g.AddVertexAndOutgoingEdges("I", new Dictionary<string, int>() { { "G", 4 }, { "H", 1 }, { "J", 1 } });
             g.AddVertexAndOutgoingEdges("J", new Dictionary<string, int>() { { "H", 4 }, { "I", 1 } });
-            
+            */
             /*
             g.AddVertexAndOutgoingEdges("A", new Dictionary<string, int>() { { "E", 1 }, { "B", 3 } });
             g.AddVertexAndOutgoingEdges("B", new Dictionary<string, int>() { { "C", 1 } });
@@ -47,21 +63,16 @@ namespace Suurballe_s_Algorithm
             g.AddVertexAndOutgoingEdges("L", new Dictionary<string, int>() { { "I", 1 }, { "M", 3 } });
             g.AddVertexAndOutgoingEdges("M", new Dictionary<string, int>() { { "K", 1 }, { "L", 3 } });
             */
-                        
-            Console.Write("Give start vertex:\t");
-            start = Console.ReadLine();
-            Console.Write("Give finish vertex:\t");
-            finish = Console.ReadLine();
 
-            try
-            {
-                //g.PrintPath(g.ShortestPath(start, finish).Path);
-                g.SuurballeDisjointVertices(start, finish);                
-            }            
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
+            Console.Write("Give start vertex:\t");
+            start = g.VerticesNamesToID[Console.ReadLine()];
+            Console.Write("Give finish vertex:\t");
+            finish = g.VerticesNamesToID[Console.ReadLine()];
+
+            
+            g.PrintPath(g.ShortestPath(start, finish).Path);
+            g.SuurballeDisjointVertices(start, finish);                
+            
             Console.ReadLine();
         }
     }

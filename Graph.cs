@@ -7,7 +7,9 @@ namespace Suurballe_s_Algorithm
     class Graph
     {
 
-        Dictionary<string, Dictionary<string, int>> Vertices = new Dictionary<string, Dictionary<string, int>>();        
+        Dictionary<string, Dictionary<string, int>> Vertices = new Dictionary<string, Dictionary<string, int>>();
+        public Dictionary<string, string> VerticesIdtoNames = new Dictionary<string, string>();
+        public Dictionary<string, string> VerticesNamesToID = new Dictionary<string, string>();
         public void AddVertexAndOutgoingEdges(string name, Dictionary<string, int> edges)
         {
             if (Vertices.ContainsKey(name))
@@ -21,7 +23,18 @@ namespace Suurballe_s_Algorithm
             if (Vertices.ContainsKey(name))
                 throw new Exception("This vertex is already defined.");
             else
-                Vertices[name] = new Dictionary<string, int>();
+                Vertices[name] = new Dictionary<string,int>();
+        }
+        public void AddVertexName(string id, string name)
+        {
+            if (Vertices.ContainsKey(id))
+                throw new Exception("This vertex is already defined.");
+            else
+            {
+                VerticesIdtoNames[id] = name;
+                VerticesNamesToID[name] = id;
+                Vertices[id] = new Dictionary<string, int>();
+            }
         }
 
         public void RemoveVertex(string name)
@@ -391,12 +404,13 @@ namespace Suurballe_s_Algorithm
         }
         public void PrintPathListofKeyValuePairDisjoint(List<KeyValuePair<string, string>> PathListofKeyValuePair)
         {
-            Console.Write(PathListofKeyValuePair[0].Key.Remove(PathListofKeyValuePair[0].Key.LastIndexOf(".1")));
+            Console.Write(VerticesIdtoNames[PathListofKeyValuePair[0].Key.Remove(PathListofKeyValuePair[0].Key.LastIndexOf(".1"))]);
             foreach (var Node in PathListofKeyValuePair)
             {
-                if(!Node.Value.EndsWith(".1"))
-                    Console.Write(" -> " + Node.Value);
+                if(Node.Value.EndsWith(".1"))
+                    Console.Write(" -> " + VerticesIdtoNames[Node.Value.Remove(Node.Value.LastIndexOf(".1"))]);
             }
+            Console.Write(" -> " + VerticesIdtoNames[PathListofKeyValuePair.Last().Value]);
             Console.WriteLine();
         }
 
