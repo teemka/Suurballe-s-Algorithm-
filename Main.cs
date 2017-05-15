@@ -17,15 +17,15 @@ namespace Suurballe_s_Algorithm
                 string[] fields = line.Split(',');
                 if (lineNumber > 0 && lineNumber < 234)
                 {
-                    g.AddVertexName(fields[0], fields[1]);
+                    g.AddVertexandNameandWeight(fields[0], fields[1], int.Parse(fields[2]));
                 }
                 if (lineNumber > 235)
                 {
-                    g.AddEdge(fields[0], fields[1], 1);
-                    g.AddEdge(fields[1], fields[0], 1);
+                    g.AddEdgeWeightfromVertices(fields[0], fields[1]);
+                    g.AddEdgeWeightfromVertices(fields[1], fields[0]);
                 }
                 lineNumber++;
-            }            
+            }
             //Example from https://en.wikipedia.org/wiki/Suurballe's_algorithm
             /*
             g.AddVertexAndOutgoingEdges("A", new Dictionary<string, int>() { { "B", 1 }, { "C", 2 } });
@@ -63,17 +63,24 @@ namespace Suurballe_s_Algorithm
             g.AddVertexAndOutgoingEdges("L", new Dictionary<string, int>() { { "I", 1 }, { "M", 3 } });
             g.AddVertexAndOutgoingEdges("M", new Dictionary<string, int>() { { "K", 1 }, { "L", 3 } });
             */
-
-            Console.Write("Give start vertex:\t");
-            start = g.VerticesNamesToID[Console.ReadLine()];
-            Console.Write("Give finish vertex:\t");
-            finish = g.VerticesNamesToID[Console.ReadLine()];
-
             
-            g.PrintPath(g.ShortestPath(start, finish).Path);
-            g.SuurballeDisjointVertices(start, finish);                
+                Console.Write("Give start vertex:\t");
+                start = g.VerticesNamesToID[Console.ReadLine().Trim()];
+                Console.Write("Give finish vertex:\t");
+                finish = g.VerticesNamesToID[Console.ReadLine().Trim()];
+
+
+                g.PrintPathIDtoNames(g.ShortestPath(start, finish).Path);
+                g.Suurballe(start, finish);
+
+                Console.ReadLine();
             
-            Console.ReadLine();
+            /*while(true)
+            {
+                Console.Write("Does the graph contain: ");
+                if (g.VerticesNamesToID.ContainsKey(Console.ReadLine())) Console.WriteLine("Yes");
+                else Console.WriteLine("No");
+            }*/
         }
     }
 }

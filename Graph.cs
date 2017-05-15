@@ -8,8 +8,9 @@ namespace Suurballe_s_Algorithm
     {
 
         Dictionary<string, Dictionary<string, int>> Vertices = new Dictionary<string, Dictionary<string, int>>();
-        public Dictionary<string, string> VerticesIdtoNames = new Dictionary<string, string>();
+        public Dictionary<string, string> VerticesIDtoNames = new Dictionary<string, string>();
         public Dictionary<string, string> VerticesNamesToID = new Dictionary<string, string>();
+        public Dictionary<string, int> VerticesWeight = new Dictionary<string, int>();
         public void AddVertexAndOutgoingEdges(string name, Dictionary<string, int> edges)
         {
             if (Vertices.ContainsKey(name))
@@ -18,21 +19,22 @@ namespace Suurballe_s_Algorithm
                 Vertices[name] = edges;
         }
 
-        public void AddVertex(string name)
+        public void AddVertex(string id)
         {
-            if (Vertices.ContainsKey(name))
+            if (Vertices.ContainsKey(id))
                 throw new Exception("This vertex is already defined.");
             else
-                Vertices[name] = new Dictionary<string,int>();
+                Vertices[id] = new Dictionary<string,int>();
         }
-        public void AddVertexName(string id, string name)
+        public void AddVertexandNameandWeight(string id, string name, int weight)
         {
             if (Vertices.ContainsKey(id))
                 throw new Exception("This vertex is already defined.");
             else
             {
-                VerticesIdtoNames[id] = name;
+                VerticesIDtoNames[id] = name;
                 VerticesNamesToID[name] = id;
+                VerticesWeight[id] = weight;
                 Vertices[id] = new Dictionary<string, int>();
             }
         }
@@ -47,6 +49,11 @@ namespace Suurballe_s_Algorithm
 
         public void AddEdge(string from, string to, int value)
         {
+            Vertices[from].Add(to, value);
+        }
+        public void AddEdgeWeightfromVertices(string from, string to)
+        {
+            var value = 100 - VerticesWeight[to];
             Vertices[from].Add(to, value);
         }
 
@@ -105,7 +112,7 @@ namespace Suurballe_s_Algorithm
             {
                 if (Vertex.Key == Start)
                 {
-                    Distances[Vertex.Key] = 0;
+                    Distances[Vertex.Key] = (int)0;
                 }
                 else
                 {
@@ -404,25 +411,35 @@ namespace Suurballe_s_Algorithm
         }
         public void PrintPathListofKeyValuePairDisjoint(List<KeyValuePair<string, string>> PathListofKeyValuePair)
         {
-            Console.Write(VerticesIdtoNames[PathListofKeyValuePair[0].Key.Remove(PathListofKeyValuePair[0].Key.LastIndexOf(".1"))]);
+            Console.Write(VerticesIDtoNames[PathListofKeyValuePair[0].Key.Remove(PathListofKeyValuePair[0].Key.LastIndexOf(".1"))]);
             foreach (var Node in PathListofKeyValuePair)
             {
                 if(Node.Value.EndsWith(".1"))
-                    Console.Write(" -> " + VerticesIdtoNames[Node.Value.Remove(Node.Value.LastIndexOf(".1"))]);
+                    Console.Write(" -> " + VerticesIDtoNames[Node.Value.Remove(Node.Value.LastIndexOf(".1"))]);
             }
-            Console.Write(" -> " + VerticesIdtoNames[PathListofKeyValuePair.Last().Value]);
+            Console.Write(" -> " + VerticesIDtoNames[PathListofKeyValuePair.Last().Value]);
             Console.WriteLine();
         }
 
         public void PrintPath(List<string> Path)
         {
-            var Last = Path[Path.Count - 1];
+            var Last = Path.Last();
             foreach (var Node in Path)
             {
                 if (Node == Last)
                     Console.WriteLine(Node);
                 else
                     Console.Write(Node + " -> ");
+            }
+        }
+        public void PrintPathIDtoNames(List<string> Path)
+        {            
+            foreach (var Node in Path)
+            {
+                if (Node == Path.Last())
+                    Console.WriteLine(VerticesIDtoNames[Node]);
+                else
+                    Console.Write(VerticesIDtoNames[Node] + " -> ");
             }
         }
 
@@ -439,10 +456,10 @@ namespace Suurballe_s_Algorithm
 
         public void PrintPathListofKeyValuePair(List<KeyValuePair<string, string>> PathListofKeyValuePair)
         {            
-            Console.Write(PathListofKeyValuePair[0].Key);
+            Console.Write(VerticesIDtoNames[PathListofKeyValuePair[0].Key]);
             foreach (var Node in PathListofKeyValuePair)
             {
-                Console.Write(" -> " + Node.Value);
+                Console.Write(" -> " + VerticesIDtoNames[Node.Value]);
             }
             Console.WriteLine();
         }
