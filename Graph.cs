@@ -75,6 +75,21 @@ namespace Suurballe_s_Algorithm
             }
         }
 
+        public int GetVertexCount()
+        {
+            return Vertices.Count;
+        }
+
+        public int GetEdgeCount()
+        {
+            int count = 0;
+            foreach(var Vertex in Vertices)
+            {
+                count += Vertex.Value.Count;
+            }
+            return count;
+        }
+
         public DijkstraOut ShortestPathTree(string Start, string Finish)
         {
             if (!Vertices.ContainsKey(Start))
@@ -373,7 +388,7 @@ namespace Suurballe_s_Algorithm
             PrintPathListofKeyValuePair(FinalPath2);
 
         }
-        public void SplitVertices()
+        private void SplitVertices() // Throws exception if self-loops exist 
         {
             foreach(var Vertex in Vertices.ToList())
             {
@@ -383,8 +398,8 @@ namespace Suurballe_s_Algorithm
                 foreach (var OutEdge in Vertex.Value.ToList())
                 {
                     var value = this.GetEdgeValue(Vertex.Key, OutEdge.Key);
-                    this.RemoveEdge(Vertex.Key, OutEdge.Key);
-                    this.AddEdge(Vertex.Key + ".1", OutEdge.Key, value);
+                    this.RemoveEdge(Vertex.Key, OutEdge.Key);                    
+                    this.AddEdge(Vertex.Key + ".1", OutEdge.Key, value);                                       
                 }
                 AddEdge(Vertex.Key, Vertex1, 0);
             }
@@ -423,7 +438,7 @@ namespace Suurballe_s_Algorithm
             Console.WriteLine();
         }
 
-        public void PrintPathListofKeyValuePair(List<KeyValuePair<string, string>> PathListofKeyValuePair)
+        private void PrintPathListofKeyValuePair(List<KeyValuePair<string, string>> PathListofKeyValuePair)
         {            
             Console.Write(PathListofKeyValuePair[0].Key);
             foreach (var Node in PathListofKeyValuePair)
