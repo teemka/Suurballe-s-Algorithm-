@@ -23,6 +23,10 @@ namespace Suurballe_s_Algorithm
             }
             EdgePath = DictionaryPathTemp;
         }        
+        public DijkstraOut()
+        {
+            
+        }
     }
 
 }
