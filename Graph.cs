@@ -151,28 +151,15 @@ namespace Suurballe_s_Algorithm
         public DijkstraOut ShortestPath(string Start, string Finish)
         {
             if (!Vertices.ContainsKey(Start))
-                throw new Exception("Dijkstra: Graph does not contain defined start vertex");
+                throw new Exception("Graph does not contain defined start vertex");
             if (!Vertices.ContainsKey(Finish))
-                throw new Exception("Dijkstra: Graph does not contain defined finish vertex");
-            if (Vertices[Start].Count == 0)
-                throw new Exception("Dijkstra: Start vertex has no outgoing edges");
-            bool hasIncomingEdges = false;
-            foreach(var Vertex in Vertices)
-            {
-                if (Vertex.Value.ContainsKey(Finish) && Vertex.Key!=Finish+".1")
-                {
-                    hasIncomingEdges = true;
-                    break;
-                }
-            }
-            if (!hasIncomingEdges)
-                throw new Exception("Dijkstra: Finish is unreachable");
+                throw new Exception("Graph does not contain defined finish vertex");
 
             var Parents = new Dictionary<string, string>();
             var Distances = new Dictionary<string, int>();
             var Nodes = new List<string>();
 
-            List<string> Path = null;            
+            List<string> Path = null;
 
             foreach (var Vertex in Vertices)
             {
@@ -214,7 +201,6 @@ namespace Suurballe_s_Algorithm
                     //break;
                 }
                 
-                
                 foreach (var Neighbour in Vertices[Smallest])
                 {
                     var Alternative = Distances[Smallest] + Neighbour.Value;
@@ -229,19 +215,13 @@ namespace Suurballe_s_Algorithm
         }
 
         public void SuurballeDisjointVertices(string Start1, string Finish)
-        {            
+        {
+            string Start = Start1 + ".1";
             if (!Vertices.ContainsKey(Start1))
-            {
-                Console.WriteLine("Graph does not contain defined start vertex");
-                return;
-            }
+                throw new Exception("Graph does not contain defined start vertex");
             if (!Vertices.ContainsKey(Finish))
-            {
-                Console.WriteLine("Graph does not contain defined finish vertex");
-                return;
-            }
+                throw new Exception("Graph does not contain defined finish vertex");
             this.SplitVertices();
-            string Start = Start1 + ".1";           
             var Dijkstra1 = ShortestPathTree(Start, Finish);
             var ResidualGraph = this; //It does not create a copy
 
@@ -257,33 +237,15 @@ namespace Suurballe_s_Algorithm
             foreach (var Vertex in Dijkstra1.Path)
             {
                 if (Dijkstra1.Parents.TryGetValue(Vertex, out var value))
-                {
-                    if (ResidualGraph.Vertices[Vertex].ContainsKey(value))
-                    {
-                        ResidualGraph.RemoveEdge(Vertex, value); // Create a residual graph Gt formed from G by removing the edges of G on path P1 that are directed into start.                          
-                    }
-                    try
-                    {
-                        var val = GetEdgeValue(value, Vertex);
-                        ResidualGraph.RemoveEdge(value, Vertex);
-                        ResidualGraph.AddEdge(Vertex.Contains(".1") ? Vertex : Vertex + ".1", value.Length == 1 ? value : value.Remove(1), val);
-                    }
-                    catch
-                    { }
-                    // Reverse the direction of the zero length edges along path P1. 
-                }
+                    if(ResidualGraph.Vertices[Vertex].ContainsKey(value))
+                        ResidualGraph.RemoveEdge(Vertex, value); // Create a residual graph Gt formed from G by removing the edges of G on path P1 that are directed into start.
+               
+                if (Dijkstra1.Parents.TryGetValue(Vertex, out var value1))
+                    ResidualGraph.ReverseEdge(value1, Vertex); // Reverse the direction of the zero length edges along path P1.                
+                
             } // Create a residual graph.
 
-            var Dijkstra2 = new DijkstraOut();
-            try
-            {
-                Dijkstra2 = ResidualGraph.ShortestPath(Start, Finish);
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return;
-            }
+            var Dijkstra2 = ResidualGraph.ShortestPath(Start, Finish);
             //Find the shortest path P2 in the residual graph Gt by running Dijkstra's algorithm.
 
             List<KeyValuePair<string, string>> FinalPath1 = new List<KeyValuePair<string, string>>();
@@ -363,16 +325,7 @@ namespace Suurballe_s_Algorithm
 
             } // Create a residual graph.
 
-            var Dijkstra2 = new DijkstraOut();
-            try
-            {
-                Dijkstra2 = ResidualGraph.ShortestPath(Start, Finish);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return;
-            }
+            var Dijkstra2 = ResidualGraph.ShortestPath(Start, Finish);
             //Find the shortest path P2 in the residual graph Gt by running Dijkstra's algorithm.
 
             List<KeyValuePair<string, string>> FinalPath1 = new List<KeyValuePair<string, string>>();
