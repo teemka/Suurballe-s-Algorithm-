@@ -35,7 +35,7 @@ namespace Suurballe_s_Algorithm
 
             for (int i = 65; i < 73; i++)
             {
-                for (int j = 65; j < 73; j++)
+                for (int j = 70; j < 73; j++)
                 {
                     if (j == i) continue;
                     Graph g = new Graph();
@@ -45,15 +45,20 @@ namespace Suurballe_s_Algorithm
                     //g.AddVertexAndOutgoingEdges("D", new Dictionary<string, int>() { { "A", 1 }, { "C", 1 } });
 
 
-                    g.AddVertexAndOutgoingEdges("A", new Dictionary<string, int>() { { "E", 1 }, { "B", 3 } });
-                    g.AddVertexAndOutgoingEdges("B", new Dictionary<string, int>() { { "C", 1 } });
-                    g.AddVertexAndOutgoingEdges("C", new Dictionary<string, int>() { { "H", 1 }, { "E", 1 }, { "D", 1 } });
-                    g.AddVertexAndOutgoingEdges("D", new Dictionary<string, int>() { { "E", 3 }, { "C", 1 }, { "G", 1 } });
-                    g.AddVertexAndOutgoingEdges("E", new Dictionary<string, int>() { { "A", 1 }, { "F", 2 } });
-                    g.AddVertexAndOutgoingEdges("F", new Dictionary<string, int>() { { "G", 3 } });
-                    g.AddVertexAndOutgoingEdges("G", new Dictionary<string, int>() { { "F", 3 }, { "H", 2 } });
-                    g.AddVertexAndOutgoingEdges("H", new Dictionary<string, int>() { { "C", 1 }, { "G", 2 } });
-
+                    //g.AddVertexAndOutgoingEdges("A", new Dictionary<string, int>() { { "E", 1 }, { "B", 3 } });
+                    //g.AddVertexAndOutgoingEdges("B", new Dictionary<string, int>() { { "C", 1 } });
+                    //g.AddVertexAndOutgoingEdges("C", new Dictionary<string, int>() { { "H", 1 }, { "E", 1 }, { "D", 1 } });
+                    //g.AddVertexAndOutgoingEdges("D", new Dictionary<string, int>() { { "E", 3 }, { "C", 1 }, { "G", 1 } });
+                    //g.AddVertexAndOutgoingEdges("E", new Dictionary<string, int>() { { "A", 1 }, { "F", 2 } });
+                    //g.AddVertexAndOutgoingEdges("F", new Dictionary<string, int>() { { "G", 3 } });
+                    //g.AddVertexAndOutgoingEdges("G", new Dictionary<string, int>() { { "F", 3 }, { "H", 2 } });
+                    //g.AddVertexAndOutgoingEdges("H", new Dictionary<string, int>() { { "C", 1 }, { "G", 2 } });
+                    g.AddVertexAndOutgoingEdges("A", new Dictionary<string, int>() { { "B", 1 }, { "C", 2 } });
+                    g.AddVertexAndOutgoingEdges("B", new Dictionary<string, int>() { { "A", 1 }, { "D", 1 }, { "E", 2 } });
+                    g.AddVertexAndOutgoingEdges("C", new Dictionary<string, int>() { { "A", 2 }, { "D", 2 } });
+                    g.AddVertexAndOutgoingEdges("D", new Dictionary<string, int>() { { "C", 2 }, { "F", 1 }, { "B", 1 } });
+                    g.AddVertexAndOutgoingEdges("E", new Dictionary<string, int>() { { "B", 2 }, { "F", 2 } });
+                    g.AddVertexAndOutgoingEdges("F", new Dictionary<string, int>() { { "D", 1 }, { "E", 2 } });
 
 
                     //Console.Write("Give start vertex:\t");

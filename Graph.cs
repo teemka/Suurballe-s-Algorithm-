@@ -258,19 +258,27 @@ namespace Suurballe_s_Algorithm
             {
                 if (Dijkstra1.Parents.TryGetValue(Vertex, out var value))
                 {
-                    if (ResidualGraph.Vertices[Vertex].ContainsKey(value))
+                    if (Vertex == value + ".1" ||Vertex+".1"==value)
                     {
-                        ResidualGraph.RemoveEdge(Vertex, value); // Create a residual graph Gt formed from G by removing the edges of G on path P1 that are directed into start.                          
+                        continue;
                     }
-                    try
+                    else
                     {
-                        var val = GetEdgeValue(value, Vertex);
-                        ResidualGraph.RemoveEdge(value, Vertex);
-                        ResidualGraph.AddEdge(Vertex.Contains(".1") ? Vertex : Vertex + ".1", value.Length == 1 ? value : value.Remove(1), val);
+                        if (ResidualGraph.Vertices[Vertex].ContainsKey(value))
+                        {
+                            ResidualGraph.RemoveEdge(Vertex, value); // Create a residual graph Gt formed from G by removing the edges of G on path P1 that are directed into start.                          
+                        }
+                        try
+                        {
+                            var val = GetEdgeValue(value, Vertex);
+                            ResidualGraph.RemoveEdge(value, Vertex);
+                            ResidualGraph.AddEdge(Vertex.Contains(".1") ? Vertex : Vertex + ".1", value.Length == 1 ? value : value.Remove(1), val);
+                        }
+                        catch
+                        { }
+                        // Reverse the direction of the zero length edges along path P1. 
                     }
-                    catch
-                    { }
-                    // Reverse the direction of the zero length edges along path P1. 
+
                 }
             } // Create a residual graph.
 
@@ -285,9 +293,10 @@ namespace Suurballe_s_Algorithm
                 return;
             }
             //Find the shortest path P2 in the residual graph Gt by running Dijkstra's algorithm.
-
-            List<KeyValuePair<string, string>> FinalPath1 = new List<KeyValuePair<string, string>>();
-            List<KeyValuePair<string, string>> FinalPath2 = new List<KeyValuePair<string, string>>();
+            Dijkstra1.EdgePath = MendPath(Dijkstra1.EdgePath);
+            Dijkstra2.EdgePath = MendPath(Dijkstra2.EdgePath);
+            Dictionary<string, string> FinalPath1 = new Dictionary<string, string>();
+            Dictionary<string, string> FinalPath2 = new Dictionary<string, string>();
 
             foreach (var Node1 in Dijkstra1.EdgePath.ToList())
             {                
@@ -302,11 +311,11 @@ namespace Suurballe_s_Algorithm
             }// Discard the common reversed edges between both paths.
             try
             {
-                FinalPath1.Add(new KeyValuePair<string, string>(Start, Dijkstra1.EdgePath[Start]));// Add first edge to the path.
-                Dijkstra1.EdgePath.Remove(Start);// Shorten the Dictionary
+                FinalPath1.Add(Start1, Dijkstra1.EdgePath[Start1]);// Add first edge to the path.
+                Dijkstra1.EdgePath.Remove(Start1);// Shorten the Dictionary
 
-                FinalPath2.Add(new KeyValuePair<string, string>(Start, Dijkstra2.EdgePath[Start]));// Add first edge to the path.
-                Dijkstra2.EdgePath.Remove(Start);// Shorten the Dictionary
+                FinalPath2.Add(Start1, Dijkstra2.EdgePath[Start1]);// Add first edge to the path.
+                Dijkstra2.EdgePath.Remove(Start1);// Shorten the Dictionary
             }
             catch
             {
@@ -320,19 +329,38 @@ namespace Suurballe_s_Algorithm
             
             while(SharedPoolofEdges.ContainsKey(FinalPath1.Last().Value))
             {
-                FinalPath1.Add(new KeyValuePair<string, string>(FinalPath1.Last().Value, SharedPoolofEdges[FinalPath1.Last().Value]));
-                SharedPoolofEdges.Remove(FinalPath1[FinalPath1.Count - 2].Value);
+                var last = FinalPath1.Last().Value;
+                FinalPath1.Add(FinalPath1.Last().Value, SharedPoolofEdges[FinalPath1.Last().Value]);
+                SharedPoolofEdges.Remove(last);
             }// Build Disjoint Path 1 by searching edges outgoing from the vertex at the end of path, while removing edges already added to the Path.
 
             while (SharedPoolofEdges.ContainsKey(FinalPath2.Last().Value))
             {
-                FinalPath2.Add(new KeyValuePair<string, string>(FinalPath2.Last().Value, SharedPoolofEdges[FinalPath2.Last().Value]));
-                SharedPoolofEdges.Remove(FinalPath2[FinalPath2.Count - 2].Value);
+                var last = FinalPath2.Last().Value;
+                FinalPath2.Add(FinalPath2.Last().Value, SharedPoolofEdges[FinalPath2.Last().Value]);
+                SharedPoolofEdges.Remove(last);
             }// Build Disjoint Path 2 by searching edges outgoing from the vertex at the end of path, while removing edges already added to the Path.           
             
-            PrintPathListofKeyValuePairDisjoint(FinalPath1);
-            PrintPathListofKeyValuePairDisjoint(FinalPath2);
+            PrintPathListofKeyValuePair(FinalPath1.ToList());
+            PrintPathListofKeyValuePair(FinalPath2.ToList());
             
+        }
+        private Dictionary<string, string> MendPath(Dictionary<string, string> EdgePath)
+        {            
+            foreach(KeyValuePair<string,string> edge in EdgePath.ToList())
+            {
+                if (edge.Value.EndsWith(".1"))
+                    EdgePath.Remove(edge.Key);
+                if (edge.Key.EndsWith(".1"))
+                {
+                    var value = edge.Value;
+                    var key = edge.Key;
+                    key = key.Remove(key.Length - 2);
+                    EdgePath.Remove(edge.Key);
+                    EdgePath.Add(key, value);
+                }
+            }
+            return EdgePath;
         }
         public void Suurballe(string Start, string Finish)
         {           
